@@ -157,25 +157,22 @@
     },
     {
       "name": "trtc-dashboard",
-      "displayName": "TRTC 监控面板链接生成",
-      "description": "根据 SDKAppID 和 RoomID 等参数自动生成 TRTC 监控仪表盘的直达链接，快速定位通话质量问题。",
-      "version": "1.0.0",
+      "displayName": "TRTC 通话排查助手",
+      "description": "从用户输入中提取 sdkAppId/userId/roomNum/时间/问题描述等信息，通过 TRTC 内网 API 深度分析通话数据（双端事件、采集/播放音量、页面详细事件），自动推断排查结论。支持经验库自学习，从纠正中积累经验。",
       "author": "harryxia",
+      "version": "3.4.0",
       "category": "tool",
       "tags": [
-        "TRTC",
-        "监控面板",
-        "Dashboard",
-        "通话质量",
-        "运维"
+        "trtc",
+        "monitoring",
+        "troubleshooting",
+        "audio",
+        "video",
+        "rtc",
+        "playwright"
       ],
-      "dependencies": [],
-      "requirements": {
-        "python": false,
-        "env_vars": []
-      },
       "path": "skills/trtc-dashboard",
-      "fileCount": 1
+      "fileCount": 4
     }
   ]
 }
