@@ -1,0 +1,11 @@
+{
+  "name": "app-sdk-analysis",
+  "displayName": "APK SDK 逆向分析",
+  "description": "对 Android APK 进行逆向分析，识别其中集成的 RTC / IM / 推送等 SDK 供应商及版本信息，支持竞品技术栈摸底。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "tool",
+  "tags": ["APK", "逆向分析", "SDK检测", "竞品分析", "Android"],
+  "dependencies": ["apktool", "python3"],
+  "requirements": { "python": true, "env_vars": [] }
+}

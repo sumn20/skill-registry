@@ -1,0 +1,11 @@
+{
+  "name": "trtc-dashboard",
+  "displayName": "TRTC 监控面板链接生成",
+  "description": "根据 SDKAppID 和 RoomID 等参数自动生成 TRTC 监控仪表盘的直达链接，快速定位通话质量问题。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "tool",
+  "tags": ["TRTC", "监控面板", "Dashboard", "通话质量", "运维"],
+  "dependencies": [],
+  "requirements": { "python": false, "env_vars": [] }
+}

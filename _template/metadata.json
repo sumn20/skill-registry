@@ -1,0 +1,14 @@
+{
+  "name": "my-skill-name",
+  "displayName": "我的 Skill 名称",
+  "description": "一句话描述这个 Skill 的用途",
+  "version": "1.0.0",
+  "author": "your-name",
+  "category": "knowledge | tool | automation",
+  "tags": ["标签1", "标签2"],
+  "dependencies": [],
+  "requirements": {
+    "python": false,
+    "env_vars": []
+  }
+}

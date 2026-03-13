@@ -1,0 +1,155 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-03-13",
+  "skillCount": 6,
+  "skills": [
+    {
+      "name": "app-company-lookup",
+      "displayName": "App-公司双向查询",
+      "description": "通过腾讯应用商店 API 实现 App 名称 → 开发公司、公司名称 → 旗下 App 的双向查询能力，辅助客户背调和商机挖掘。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "tool",
+      "tags": [
+        "App查询",
+        "公司查询",
+        "应用商店",
+        "商机挖掘",
+        "客户分析"
+      ],
+      "dependencies": [
+        "python3",
+        "requests"
+      ],
+      "requirements": {
+        "python": true,
+        "env_vars": []
+      },
+      "path": "skills/app-company-lookup",
+      "fileCount": 2
+    },
+    {
+      "name": "app-sdk-analysis",
+      "displayName": "APK SDK 逆向分析",
+      "description": "对 Android APK 进行逆向分析，识别其中集成的 RTC / IM / 推送等 SDK 供应商及版本信息，支持竞品技术栈摸底。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "tool",
+      "tags": [
+        "APK",
+        "逆向分析",
+        "SDK检测",
+        "竞品分析",
+        "Android"
+      ],
+      "dependencies": [
+        "apktool",
+        "python3"
+      ],
+      "requirements": {
+        "python": true,
+        "env_vars": []
+      },
+      "path": "skills/app-sdk-analysis",
+      "fileCount": 6
+    },
+    {
+      "name": "im-knowledge",
+      "displayName": "IM 产品知识库",
+      "description": "腾讯云 IM / 环信 / 融云 / 网易云信四大 IM 产品的全面对比知识库，覆盖功能矩阵、技术架构、计费模式、迁移方案。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "knowledge",
+      "tags": [
+        "IM",
+        "即时通讯",
+        "腾讯云IM",
+        "环信",
+        "融云",
+        "网易云信",
+        "竞品分析"
+      ],
+      "dependencies": [],
+      "requirements": {
+        "python": false,
+        "env_vars": []
+      },
+      "path": "skills/im-knowledge",
+      "fileCount": 6
+    },
+    {
+      "name": "rtc-knowledge",
+      "displayName": "RTC 产品知识库",
+      "description": "TRTC / Agora / ZEGO 三大 RTC 产品的深度对比知识库，涵盖架构、功能、价格、适用场景，辅助售前竞品分析与客户方案推荐。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "knowledge",
+      "tags": [
+        "RTC",
+        "TRTC",
+        "Agora",
+        "ZEGO",
+        "竞品分析",
+        "音视频"
+      ],
+      "dependencies": [],
+      "requirements": {
+        "python": false,
+        "env_vars": []
+      },
+      "path": "skills/rtc-knowledge",
+      "fileCount": 5
+    },
+    {
+      "name": "soul-ticket-dashboard",
+      "displayName": "Soul 工单深度分析",
+      "description": "针对 Soul App 的 TRTC 工单进行深度分析，自动调用 TRTC 后台 API 获取通话质量数据，生成可视化分析报告。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "automation",
+      "tags": [
+        "Soul",
+        "工单分析",
+        "TRTC",
+        "通话质量",
+        "数据分析",
+        "可视化"
+      ],
+      "dependencies": [
+        "python3",
+        "requests"
+      ],
+      "requirements": {
+        "python": true,
+        "env_vars": [
+          "TRTC_SECRET_ID",
+          "TRTC_SECRET_KEY"
+        ]
+      },
+      "path": "skills/soul-ticket-dashboard",
+      "fileCount": 4
+    },
+    {
+      "name": "trtc-dashboard",
+      "displayName": "TRTC 监控面板链接生成",
+      "description": "根据 SDKAppID 和 RoomID 等参数自动生成 TRTC 监控仪表盘的直达链接，快速定位通话质量问题。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "tool",
+      "tags": [
+        "TRTC",
+        "监控面板",
+        "Dashboard",
+        "通话质量",
+        "运维"
+      ],
+      "dependencies": [],
+      "requirements": {
+        "python": false,
+        "env_vars": []
+      },
+      "path": "skills/trtc-dashboard",
+      "fileCount": 1
+    }
+  ]
+}

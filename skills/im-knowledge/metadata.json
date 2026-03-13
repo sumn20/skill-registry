@@ -1,0 +1,11 @@
+{
+  "name": "im-knowledge",
+  "displayName": "IM 产品知识库",
+  "description": "腾讯云 IM / 环信 / 融云 / 网易云信四大 IM 产品的全面对比知识库，覆盖功能矩阵、技术架构、计费模式、迁移方案。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "knowledge",
+  "tags": ["IM", "即时通讯", "腾讯云IM", "环信", "融云", "网易云信", "竞品分析"],
+  "dependencies": [],
+  "requirements": { "python": false, "env_vars": [] }
+}

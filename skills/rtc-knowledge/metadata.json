@@ -1,0 +1,11 @@
+{
+  "name": "rtc-knowledge",
+  "displayName": "RTC 产品知识库",
+  "description": "TRTC / Agora / ZEGO 三大 RTC 产品的深度对比知识库，涵盖架构、功能、价格、适用场景，辅助售前竞品分析与客户方案推荐。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "knowledge",
+  "tags": ["RTC", "TRTC", "Agora", "ZEGO", "竞品分析", "音视频"],
+  "dependencies": [],
+  "requirements": { "python": false, "env_vars": [] }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "app-company-lookup",
+  "displayName": "App-公司双向查询",
+  "description": "通过腾讯应用商店 API 实现 App 名称 → 开发公司、公司名称 → 旗下 App 的双向查询能力，辅助客户背调和商机挖掘。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "tool",
+  "tags": ["App查询", "公司查询", "应用商店", "商机挖掘", "客户分析"],
+  "dependencies": ["python3", "requests"],
+  "requirements": { "python": true, "env_vars": [] }
+}

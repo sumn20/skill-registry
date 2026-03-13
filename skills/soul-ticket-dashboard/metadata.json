@@ -1,0 +1,11 @@
+{
+  "name": "soul-ticket-dashboard",
+  "displayName": "Soul 工单深度分析",
+  "description": "针对 Soul App 的 TRTC 工单进行深度分析，自动调用 TRTC 后台 API 获取通话质量数据，生成可视化分析报告。",
+  "version": "1.0.0",
+  "author": "harryxia",
+  "category": "automation",
+  "tags": ["Soul", "工单分析", "TRTC", "通话质量", "数据分析", "可视化"],
+  "dependencies": ["python3", "requests"],
+  "requirements": { "python": true, "env_vars": ["TRTC_SECRET_ID", "TRTC_SECRET_KEY"] }
+}

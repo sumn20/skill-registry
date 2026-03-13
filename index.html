@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPaaS Skill Registry</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f;
+  --bg-card: #12121a;
+  --bg-card-hover: #1a1a27;
+  --bg-modal: #15151f;
+  --border: #1e1e2e;
+  --border-hover: #2a2a3e;
+  --text: #e4e4ef;
+  --text-dim: #8888a0;
+  --text-muted: #55556a;
+  --accent: #6366f1;
+  --accent-glow: rgba(99,102,241,.15);
+  --accent-dim: #4f46e5;
+  --green: #22c55e;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+  --cyan: #06b6d4;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 4px 24px rgba(0,0,0,.3);
+  --transition: .2s cubic-bezier(.4,0,.2,1);
+}
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== BACKGROUND ===== */
+.bg-grid {
+  position: fixed; inset: 0; z-index: -1;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,.12), transparent),
+    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+  background-size: 100% 100%, 48px 48px, 48px 48px;
+}
+
+/* ===== HEADER ===== */
+header {
+  text-align: center;
+  padding: 4rem 1.5rem 2.5rem;
+  position: relative;
+}
+header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 200px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.logo {
+  display: inline-flex; align-items: center; gap: .75rem;
+  font-size: 2rem; font-weight: 700; letter-spacing: -.025em;
+  margin-bottom: .75rem;
+}
+.logo-icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; color: #fff;
+  box-shadow: 0 0 24px rgba(99,102,241,.25);
+}
+.subtitle { color: var(--text-dim); font-size: 1.05rem; font-weight: 400; }
+.stats {
+  display: flex; justify-content: center; gap: 2rem;
+  margin-top: 1.5rem; font-size: .875rem; color: var(--text-muted);
+}
+.stats span { display: flex; align-items: center; gap: .35rem; }
+.stats .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  max-width: 960px; margin: 2rem auto 0; padding: 0 1.5rem;
+  display: flex; gap: .75rem; flex-wrap: wrap;
+}
+.search-box {
+  flex: 1; min-width: 200px; position: relative;
+}
+.search-box svg {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  width: 18px; height: 18px; color: var(--text-muted);
+}
+.search-box input {
+  width: 100%; padding: .7rem .7rem .7rem 2.6rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-size: .925rem; outline: none; transition: border var(--transition);
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-box input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+.filter-btn {
+  padding: .55rem 1rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-dim);
+  font-size: .85rem; cursor: pointer; transition: all var(--transition);
+  white-space: nowrap;
+}
+.filter-btn:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card-hover); }
+.filter-btn.active {
+  border-color: var(--accent); color: var(--accent);
+  background: var(--accent-glow);
+}
+
+/* ===== GRID ===== */
+.grid-container {
+  max-width: 960px; margin: 2rem auto; padding: 0 1.5rem;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1rem;
+}
+.empty-state {
+  grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;
+  color: var(--text-muted); font-size: 1rem;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--cyan));
+  opacity: 0; transition: opacity var(--transition);
+}
+.card:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-card-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.card:hover::before { opacity: 1; }
+.card-header { display: flex; align-items: flex-start; gap: .75rem; margin-bottom: .75rem; }
+.card-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+}
+.card-icon.knowledge { background: rgba(34,197,94,.12); color: var(--green); }
+.card-icon.tool { background: rgba(99,102,241,.12); color: var(--accent); }
+.card-icon.automation { background: rgba(245,158,11,.12); color: var(--amber); }
+.card-title { font-size: 1rem; font-weight: 600; line-height: 1.3; }
+.card-author { font-size: .8rem; color: var(--text-muted); margin-top: .15rem; }
+.card-desc {
+  font-size: .875rem; color: var(--text-dim); line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: .75rem;
+}
+.card-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.tag {
+  padding: .15rem .55rem;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 99px;
+  font-size: .75rem; color: var(--text-muted);
+}
+.card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: .85rem; padding-top: .75rem;
+  border-top: 1px solid rgba(255,255,255,.04);
+  font-size: .78rem; color: var(--text-muted);
+}
+.badge {
+  padding: .15rem .5rem; border-radius: 99px; font-size: .72rem; font-weight: 500;
+}
+.badge.knowledge { background: rgba(34,197,94,.1); color: var(--green); }
+.badge.tool { background: rgba(99,102,241,.1); color: var(--accent); }
+.badge.automation { background: rgba(245,158,11,.1); color: var(--amber); }
+
+/* ===== MODAL OVERLAY ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.6); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal {
+  width: 90%; max-width: 640px; max-height: 85vh;
+  background: var(--bg-modal); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  display: flex; flex-direction: column;
+  transform: translateY(16px); transition: transform .25s ease;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-head {
+  display: flex; align-items: flex-start; gap: 1rem; padding: 1.5rem 1.5rem .75rem;
+}
+.modal-head .card-icon { width: 52px; height: 52px; font-size: 1.5rem; border-radius: 14px; }
+.modal-meta { flex: 1; }
+.modal-meta h2 { font-size: 1.3rem; font-weight: 700; }
+.modal-meta .sub { color: var(--text-dim); font-size: .85rem; margin-top: .2rem; }
+.modal-close {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid var(--border); background: transparent;
+  color: var(--text-dim); cursor: pointer; font-size: 1.1rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.modal-close:hover { border-color: var(--border-hover); color: var(--text); background: var(--bg-card); }
+.modal-body { overflow-y: auto; padding: 0 1.5rem 1.5rem; }
+.modal-section { margin-top: 1.25rem; }
+.modal-section h3 {
+  font-size: .82rem; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: .6rem;
+}
+.modal-section p, .modal-section ul { font-size: .9rem; color: var(--text-dim); }
+.modal-section ul { padding-left: 1.2rem; }
+.modal-section li { margin-bottom: .3rem; }
+.install-block {
+  background: #0d0d14; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: .85rem 1rem; position: relative; margin-top: .5rem;
+}
+.install-block code { font-family: 'SF Mono', Monaco, Consolas, monospace; font-size: .82rem; color: var(--cyan); white-space: pre-wrap; word-break: break-all; }
+.copy-btn {
+  position: absolute; top: .6rem; right: .6rem;
+  padding: .3rem .6rem; border-radius: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text-dim); font-size: .75rem; cursor: pointer;
+  transition: all var(--transition);
+}
+.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+.tag-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+.tag-list .tag { font-size: .8rem; padding: .2rem .65rem; }
+.dep-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+.dep-item {
+  padding: .2rem .65rem; background: rgba(244,63,94,.08);
+  border: 1px solid rgba(244,63,94,.15); border-radius: 99px;
+  font-size: .8rem; color: var(--rose);
+}
+.env-item {
+  padding: .2rem .65rem; background: rgba(245,158,11,.08);
+  border: 1px solid rgba(245,158,11,.15); border-radius: 99px;
+  font-size: .8rem; color: var(--amber); font-family: monospace;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center; padding: 3rem 1rem 2rem;
+  color: var(--text-muted); font-size: .82rem;
+  border-top: 1px solid var(--border); margin-top: 3rem;
+}
+footer a { color: var(--accent); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  header { padding: 2.5rem 1rem 2rem; }
+  .logo { font-size: 1.5rem; }
+  .grid { grid-template-columns: 1fr; }
+  .toolbar { flex-direction: column; }
+  .stats { gap: 1rem; }
+}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">S</div>
+    <span>Skill Registry</span>
+  </div>
+  <p class="subtitle">CPaaS 团队共享的 CodeBuddy Skill 商店</p>
+  <div class="stats" id="stats"></div>
+</header>
+
+<div class="toolbar">
+  <div class="search-box">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="searchInput" placeholder="搜索 Skill 名称、描述、标签...">
+  </div>
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="knowledge">知识库</button>
+  <button class="filter-btn" data-filter="tool">工具</button>
+  <button class="filter-btn" data-filter="automation">自动化</button>
+</div>
+
+<div class="grid-container">
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<footer>
+  <p>CPaaS Skill Registry &mdash; <a href="https://github.com/sumn20/skill-registry" target="_blank">GitHub</a></p>
+  <p style="margin-top:.4rem;">贡献你的 Skill：Fork &rarr; 复制 _template &rarr; 提交 PR</p>
+</footer>
+
+<script>
+/* ===== DATA ===== */
+let SKILLS = [];
+let currentFilter = 'all';
+let currentSearch = '';
+
+const CATEGORY_MAP = {
+  knowledge: { label: '知识库', icon: '&#128218;' },
+  tool:      { label: '工具',   icon: '&#128295;' },
+  automation:{ label: '自动化', icon: '&#9889;'   }
+};
+
+const REPO_URL = 'https://github.com/sumn20/skill-registry';
+
+/* ===== INIT ===== */
+async function init() {
+  try {
+    const resp = await fetch('registry.json');
+    const registry = await resp.json();
+    SKILLS = registry.skills || [];
+    renderStats(registry);
+    renderGrid();
+    bindEvents();
+  } catch (e) {
+    console.error('Failed to load registry:', e);
+    document.getElementById('grid').innerHTML =
+      '<div class="empty-state">加载失败，请确保 registry.json 与 index.html 在同一目录。</div>';
+  }
+}
+
+function renderStats(registry) {
+  const cats = {};
+  SKILLS.forEach(s => { cats[s.category] = (cats[s.category] || 0) + 1; });
+  const dots = { knowledge: 'var(--green)', tool: 'var(--accent)', automation: 'var(--amber)' };
+  let html = `<span>共 ${registry.skillCount} 个 Skill</span>`;
+  for (const [cat, count] of Object.entries(cats)) {
+    html += `<span><span class="dot" style="background:${dots[cat]}"></span>${CATEGORY_MAP[cat].label} ${count}</span>`;
+  }
+  html += `<span>更新于 ${registry.lastUpdated}</span>`;
+  document.getElementById('stats').innerHTML = html;
+}
+
+/* ===== RENDER ===== */
+function renderGrid() {
+  const filtered = SKILLS.filter(s => {
+    if (currentFilter !== 'all' && s.category !== currentFilter) return false;
+    if (currentSearch) {
+      const q = currentSearch.toLowerCase();
+      const haystack = [s.name, s.displayName, s.description, s.author, ...(s.tags || [])].join(' ').toLowerCase();
+      return haystack.includes(q);
+    }
+    return true;
+  });
+
+  const grid = document.getElementById('grid');
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state">没有找到匹配的 Skill</div>';
+    return;
+  }
+
+  grid.innerHTML = filtered.map(s => {
+    const cat = CATEGORY_MAP[s.category] || { label: s.category, icon: '&#128196;' };
+    const tagsHtml = (s.tags || []).slice(0, 4).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+    return `
+      <div class="card" data-name="${esc(s.name)}">
+        <div class="card-header">
+          <div class="card-icon ${s.category}">${cat.icon}</div>
+          <div>
+            <div class="card-title">${esc(s.displayName)}</div>
+            <div class="card-author">by ${esc(s.author)} &middot; v${esc(s.version)}</div>
+          </div>
+        </div>
+        <div class="card-desc">${esc(s.description)}</div>
+        <div class="card-tags">${tagsHtml}</div>
+        <div class="card-footer">
+          <span class="badge ${s.category}">${cat.label}</span>
+          <span>${s.fileCount} 个文件</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ===== MODAL ===== */
+function openModal(name) {
+  const s = SKILLS.find(sk => sk.name === name);
+  if (!s) return;
+  const cat = CATEGORY_MAP[s.category] || { label: s.category, icon: '&#128196;' };
+  const deps = (s.dependencies || []);
+  const envs = (s.requirements && s.requirements.env_vars) || [];
+  const tagsHtml = (s.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  const depsHtml = deps.length
+    ? deps.map(d => `<span class="dep-item">${esc(d)}</span>`).join('')
+    : '<span style="color:var(--text-muted);font-size:.85rem;">无外部依赖</span>';
+  const envsHtml = envs.length
+    ? envs.map(e => `<span class="env-item">${esc(e)}</span>`).join('')
+    : '';
+
+  const installCmd = `git clone https://github.com/sumn20/skill-registry.git /tmp/sr && cp -r /tmp/sr/skills/${s.name} .codebuddy/skills/ && rm -rf /tmp/sr`;
+
+  document.getElementById('modal').innerHTML = `
+    <div class="modal-head">
+      <div class="card-icon ${s.category}">${cat.icon}</div>
+      <div class="modal-meta">
+        <h2>${esc(s.displayName)}</h2>
+        <div class="sub">by ${esc(s.author)} &middot; v${esc(s.version)} &middot; ${cat.label} &middot; ${s.fileCount} 文件</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-section">
+        <h3>简介</h3>
+        <p>${esc(s.description)}</p>
+      </div>
+
+      <div class="modal-section">
+        <h3>标签</h3>
+        <div class="tag-list">${tagsHtml}</div>
+      </div>
+
+      <div class="modal-section">
+        <h3>依赖</h3>
+        <div class="dep-list">${depsHtml}</div>
+      </div>
+
+      ${envsHtml ? `<div class="modal-section"><h3>环境变量</h3><div class="dep-list">${envsHtml}</div></div>` : ''}
+
+      <div class="modal-section">
+        <h3>一键安装</h3>
+        <div class="install-block">
+          <code id="installCmd">${esc(installCmd)}</code>
+          <button class="copy-btn" onclick="copyInstall(this)">复制</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>Sparse Checkout（仅拉取此 Skill）</h3>
+        <div class="install-block">
+          <code id="sparseCmd">git clone --no-checkout --depth 1 https://github.com/sumn20/skill-registry.git
+cd skill-registry
+git sparse-checkout init --cone
+git sparse-checkout set skills/${s.name}
+git checkout
+cp -r skills/${s.name} /path/to/project/.codebuddy/skills/</code>
+          <button class="copy-btn" onclick="copySparse(this)">复制</button>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <h3>源码</h3>
+        <p><a href="${REPO_URL}/tree/main/skills/${s.name}" target="_blank">在 GitHub 上查看 &rarr;</a></p>
+      </div>
+    </div>`;
+
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function copyInstall(btn) {
+  const text = document.getElementById('installCmd').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copySparse(btn) {
+  const text = document.getElementById('sparseCmd').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '已复制';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ===== EVENTS ===== */
+function bindEvents() {
+  document.getElementById('searchInput').addEventListener('input', e => {
+    currentSearch = e.target.value.trim();
+    renderGrid();
+  });
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderGrid();
+    });
+  });
+
+  document.getElementById('grid').addEventListener('click', e => {
+    const card = e.target.closest('.card');
+    if (card) openModal(card.dataset.name);
+  });
+
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+}
+
+/* ===== UTILS ===== */
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+/* ===== GO ===== */
+init();
+</script>
+</body>
+</html>
