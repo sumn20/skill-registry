@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "lastUpdated": "2026-03-13",
-  "skillCount": 6,
+  "skillCount": 7,
   "skills": [
     {
       "name": "app-company-lookup",
@@ -99,6 +99,32 @@
       },
       "path": "skills/rtc-knowledge",
       "fileCount": 5
+    },
+    {
+      "name": "skill-publisher",
+      "displayName": "Skill 一键发布",
+      "description": "将 CodeBuddy Skill 的 ZIP 包一键发布到 GitHub Skill Registry，自动解压分析、生成介绍描述和 metadata、通过 GitHub API 上传并更新商店索引。",
+      "version": "1.0.0",
+      "author": "harryxia",
+      "category": "tool",
+      "tags": [
+        "Skill发布",
+        "GitHub",
+        "Registry",
+        "自动化",
+        "Skill商店",
+        "ZIP上传"
+      ],
+      "dependencies": [
+        "python3",
+        "requests"
+      ],
+      "requirements": {
+        "python": true,
+        "env_vars": []
+      },
+      "path": "skills/skill-publisher",
+      "fileCount": 3
     },
     {
       "name": "soul-ticket-dashboard",
