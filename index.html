@@ -291,6 +291,107 @@ header::after {
   border-radius: 2px; transition: width .3s ease;
 }
 
+/* ===== UPLOAD BUTTON ===== */
+.upload-trigger {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.15rem;
+  background: linear-gradient(135deg, var(--green), #16a34a);
+  border: none; border-radius: var(--radius-sm);
+  color: #fff; font-size: .85rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+  white-space: nowrap;
+}
+.upload-trigger:hover { opacity: .9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(34,197,94,.3); }
+.upload-trigger svg { width: 16px; height: 16px; }
+
+/* ===== UPLOAD MODAL ===== */
+.upload-overlay {
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,.65); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .25s ease;
+}
+.upload-overlay.open { opacity: 1; pointer-events: auto; }
+.upload-modal {
+  width: 90%; max-width: 560px; max-height: 85vh;
+  background: var(--bg-modal); border: 1px solid var(--border);
+  border-radius: 16px; box-shadow: 0 24px 64px rgba(0,0,0,.5);
+  display: flex; flex-direction: column;
+  transform: translateY(16px); transition: transform .25s ease;
+  overflow-y: auto;
+}
+.upload-overlay.open .upload-modal { transform: translateY(0); }
+.upload-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+}
+.upload-head h2 { font-size: 1.15rem; font-weight: 700; }
+.upload-body { padding: 1.5rem; }
+.upload-body label {
+  display: block; font-size: .82rem; font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: .05em; margin-bottom: .4rem; margin-top: 1rem;
+}
+.upload-body label:first-child { margin-top: 0; }
+.upload-body input[type="text"],
+.upload-body textarea,
+.upload-body select {
+  width: 100%; padding: .6rem .8rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-size: .9rem; outline: none; transition: border var(--transition);
+  font-family: inherit;
+}
+.upload-body input:focus, .upload-body textarea:focus, .upload-body select:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.upload-body textarea { min-height: 60px; resize: vertical; }
+.upload-body select { cursor: pointer; }
+.upload-body select option { background: var(--bg-card); color: var(--text); }
+
+/* Drop zone */
+.drop-zone {
+  margin-top: .5rem; padding: 2rem 1rem;
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  text-align: center; color: var(--text-muted); font-size: .9rem;
+  cursor: pointer; transition: all var(--transition);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--accent); background: var(--accent-glow);
+  color: var(--text-dim);
+}
+.drop-zone input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+}
+.drop-zone .file-name {
+  margin-top: .5rem; font-size: .82rem; color: var(--accent);
+  word-break: break-all;
+}
+
+.upload-row { display: flex; gap: .75rem; }
+.upload-row > div { flex: 1; }
+
+/* Upload submit */
+.upload-submit {
+  display: flex; align-items: center; justify-content: center; gap: .5rem;
+  width: 100%; padding: .75rem;
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, var(--accent), var(--cyan));
+  border: none; border-radius: var(--radius-sm);
+  color: #fff; font-size: .95rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition);
+}
+.upload-submit:hover { opacity: .9; transform: translateY(-1px); }
+.upload-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.upload-status {
+  margin-top: .75rem; font-size: .85rem; text-align: center;
+  min-height: 1.4em;
+}
+.upload-status.ok { color: var(--green); }
+.upload-status.err { color: var(--rose); }
+.upload-status.info { color: var(--text-dim); }
+
 /* ===== FOOTER ===== */
 footer {
   text-align: center; padding: 3rem 1rem 2rem;
@@ -330,6 +431,10 @@ footer a { color: var(--accent); }
   <button class="filter-btn" data-filter="knowledge">知识库</button>
   <button class="filter-btn" data-filter="tool">工具</button>
   <button class="filter-btn" data-filter="automation">自动化</button>
+  <button class="upload-trigger" onclick="openUpload()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    发布 Skill
+  </button>
 </div>
 
 <div class="grid-container">
@@ -338,6 +443,68 @@ footer a { color: var(--accent); }
 
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" id="modal"></div>
+</div>
+
+<!-- Upload Modal -->
+<div class="upload-overlay" id="uploadOverlay">
+  <div class="upload-modal">
+    <div class="upload-head">
+      <h2>&#128640; 发布 Skill</h2>
+      <button class="modal-close" onclick="closeUpload()">&times;</button>
+    </div>
+    <div class="upload-body">
+      <label>ZIP 文件</label>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="zipFile" accept=".zip">
+        <div>&#128230; 拖拽 ZIP 文件到此处，或点击选择</div>
+        <div class="file-name" id="fileName"></div>
+      </div>
+
+      <div class="upload-row">
+        <div>
+          <label>Skill Name (英文, 如 my-tool)</label>
+          <input type="text" id="upName" placeholder="my-awesome-skill">
+        </div>
+        <div>
+          <label>版本</label>
+          <input type="text" id="upVersion" value="1.0.0">
+        </div>
+      </div>
+
+      <label>显示名称</label>
+      <input type="text" id="upDisplayName" placeholder="我的超级工具">
+
+      <label>简介</label>
+      <textarea id="upDesc" placeholder="这个 Skill 可以做什么..."></textarea>
+
+      <div class="upload-row">
+        <div>
+          <label>作者</label>
+          <input type="text" id="upAuthor" placeholder="your-name">
+        </div>
+        <div>
+          <label>分类</label>
+          <select id="upCategory">
+            <option value="tool">工具</option>
+            <option value="knowledge">知识库</option>
+            <option value="automation">自动化</option>
+          </select>
+        </div>
+      </div>
+
+      <label>标签 (逗号分隔)</label>
+      <input type="text" id="upTags" placeholder="TRTC, 音视频, 分析">
+
+      <label>密码 (如需要)</label>
+      <input type="text" id="upSecret" placeholder="上传密码，没有则留空">
+
+      <button class="upload-submit" id="uploadBtn" onclick="doUpload()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        发布到 Skill Store
+      </button>
+      <div class="upload-status" id="uploadStatus"></div>
+    </div>
+  </div>
 </div>
 
 <footer>
@@ -654,6 +821,124 @@ async function downloadSkillZip(skillName) {
   } finally {
     btn.disabled = false;
   }
+}
+
+/* ===== UPLOAD ===== */
+const WORKER_URL = 'https://skill-upload-api.sumnxl.workers.dev/upload';
+
+function openUpload() {
+  document.getElementById('uploadOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeUpload() {
+  document.getElementById('uploadOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Drop zone interaction
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('dropZone');
+  const input = document.getElementById('zipFile');
+  const nameEl = document.getElementById('fileName');
+
+  input.addEventListener('change', () => {
+    if (input.files.length) nameEl.textContent = input.files[0].name;
+  });
+
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      input.files = e.dataTransfer.files;
+      nameEl.textContent = e.dataTransfer.files[0].name;
+    }
+  });
+
+  // Close upload modal on overlay click
+  document.getElementById('uploadOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeUpload();
+  });
+});
+
+async function doUpload() {
+  const btn = document.getElementById('uploadBtn');
+  const status = document.getElementById('uploadStatus');
+  const zipInput = document.getElementById('zipFile');
+
+  const file = zipInput.files[0];
+  if (!file) { showStatus('请先选择 ZIP 文件', 'err'); return; }
+
+  const name = document.getElementById('upName').value.trim();
+  const displayName = document.getElementById('upDisplayName').value.trim();
+  const desc = document.getElementById('upDesc').value.trim();
+  const version = document.getElementById('upVersion').value.trim();
+  const author = document.getElementById('upAuthor').value.trim();
+  const category = document.getElementById('upCategory').value;
+  const tagsStr = document.getElementById('upTags').value.trim();
+  const secret = document.getElementById('upSecret').value.trim();
+
+  if (!name) { showStatus('请填写 Skill Name', 'err'); return; }
+  if (!/^[a-z0-9][a-z0-9-]*$/.test(name)) { showStatus('Name 只允许小写字母、数字和连字符', 'err'); return; }
+  if (!displayName) { showStatus('请填写显示名称', 'err'); return; }
+  if (!desc) { showStatus('请填写简介', 'err'); return; }
+  if (!author) { showStatus('请填写作者', 'err'); return; }
+
+  const metadata = {
+    name, displayName, description: desc, version: version || '1.0.0',
+    author, category,
+    tags: tagsStr ? tagsStr.split(/[,，]/).map(t => t.trim()).filter(Boolean) : [],
+    dependencies: [],
+    requirements: { python: false, env_vars: [] }
+  };
+
+  btn.disabled = true;
+  showStatus('正在上传并发布...', 'info');
+
+  try {
+    const form = new FormData();
+    form.append('file', file);
+    form.append('metadata', JSON.stringify(metadata));
+
+    const headers = {};
+    if (secret) headers['X-Upload-Secret'] = secret;
+
+    const resp = await fetch(WORKER_URL, {
+      method: 'POST',
+      body: form,
+      headers
+    });
+
+    const result = await resp.json();
+
+    if (result.success) {
+      showStatus(`${result.message} (commit: ${result.commit}, ${result.files} 个文件)`, 'ok');
+      // Refresh skill list after 2 seconds
+      setTimeout(async () => {
+        try {
+          const r = await fetch('registry.json?t=' + Date.now());
+          const reg = await r.json();
+          SKILLS = reg.skills || [];
+          renderStats(reg);
+          renderGrid();
+        } catch {}
+      }, 3000);
+    } else {
+      showStatus(result.error || '上传失败', 'err');
+    }
+  } catch (err) {
+    showStatus('网络错误: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('uploadStatus');
+  el.textContent = msg;
+  el.className = 'upload-status ' + type;
 }
 
 /* ===== UTILS ===== */
