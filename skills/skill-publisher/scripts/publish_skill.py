@@ -237,6 +237,7 @@ def main():
     entry = dict(metadata)
     entry["path"] = f"skills/{skill_name}"
     entry["fileCount"] = len(files)
+    entry["files"] = sorted([rel for rel, _ in files])
     registry["skills"].append(entry)
     registry["skills"].sort(key=lambda s: s["name"])
     registry["skillCount"] = len(registry["skills"])

@@ -26,7 +26,8 @@
         "env_vars": []
       },
       "path": "skills/app-company-lookup",
-      "fileCount": 2
+      "fileCount": 3,
+      "files": ["SKILL.md", "metadata.json", "scripts/search_app.py"]
     },
     {
       "name": "app-sdk-analysis",
@@ -51,7 +52,8 @@
         "env_vars": []
       },
       "path": "skills/app-sdk-analysis",
-      "fileCount": 6
+      "fileCount": 7,
+      "files": ["SKILL.md", "metadata.json", "references/common-apps.md", "references/rtc-vendor-signatures.md", "references/sdk-categories.md", "scripts/parse_manifest.py", "scripts/scan_apk.py"]
     },
     {
       "name": "im-knowledge",
@@ -75,7 +77,8 @@
         "env_vars": []
       },
       "path": "skills/im-knowledge",
-      "fileCount": 6
+      "fileCount": 7,
+      "files": ["SKILL.md", "metadata.json", "references/comparison.md", "references/easemob-full.md", "references/netease-im-full.md", "references/rongcloud-full.md", "references/tencent-im-full.md"]
     },
     {
       "name": "rtc-knowledge",
@@ -98,7 +101,8 @@
         "env_vars": []
       },
       "path": "skills/rtc-knowledge",
-      "fileCount": 5
+      "fileCount": 6,
+      "files": ["SKILL.md", "metadata.json", "references/agora-full.md", "references/comparison.md", "references/trtc-full.md", "references/zego-full.md"]
     },
     {
       "name": "skill-publisher",
@@ -124,7 +128,8 @@
         "env_vars": []
       },
       "path": "skills/skill-publisher",
-      "fileCount": 3
+      "fileCount": 3,
+      "files": ["SKILL.md", "metadata.json", "scripts/publish_skill.py"]
     },
     {
       "name": "soul-ticket-dashboard",
@@ -153,7 +158,8 @@
         ]
       },
       "path": "skills/soul-ticket-dashboard",
-      "fileCount": 4
+      "fileCount": 5,
+      "files": ["README.md", "SKILL.md", "metadata.json", "requirements.txt", "scripts/gen_dashboard.py"]
     },
     {
       "name": "trtc-dashboard",
@@ -172,7 +178,8 @@
         "playwright"
       ],
       "path": "skills/trtc-dashboard",
-      "fileCount": 4
+      "fileCount": 4,
+      "files": ["SKILL.md", "lessons.md", "metadata.json", "scripts/get_detail_url.py"]
     }
   ]
 }
